@@ -7,7 +7,7 @@ import type {
   TReasoningOverride,
   Agents,
 } from 'librechat-data-provider';
-import type { IUser, AppConfig, IConversation } from '@librechat/data-schemas';
+import type { IUser, AppConfig, IConversation, ScoutContext } from '@librechat/data-schemas';
 import type { Request } from 'express';
 import type { ResolvedChatProjectContext } from '../projects/context';
 
@@ -59,6 +59,8 @@ export type ServerRequest = Request<unknown, unknown, RequestBody> & {
    *  Derived per request from the sealed decision and never persisted. */
   codeWorkspaceInheritance?: ReadonlyMap<string, string>;
   authStrategy?: string;
+  /** Trusted server admission; never populated from request headers/body. */
+  scoutContext?: ScoutContext;
   /** Trusted snapshot used to keep a request-scoped override out of saved conversation defaults. */
   reasoningOverrideBase?: {
     key: TReasoningOverride['key'];

@@ -7,6 +7,8 @@ export type {
   SubagentContentAppendResult,
 } from './subagentContent';
 import type { ToolApprovalGrantStorage } from 'librechat-data-provider';
+import { createScoutMethods } from '~/scout';
+import type { ScoutMethods } from '~/scout';
 import type { ScheduleMCPConsentStorage } from './scheduleConsent';
 import type { ClearFileCodeEnvRefsParams } from '~/types/file';
 import type { FileStorageMethods } from './fileStorage';
@@ -273,7 +275,8 @@ export {
   AgentQueuedTurnLaneRetiredError,
 };
 
-export type AllMethods = SubagentContentMethods &
+export type AllMethods = ScoutMethods &
+  SubagentContentMethods &
   ToolApprovalGrantStorage &
   UserMethods &
   SessionMethods &
@@ -520,6 +523,7 @@ export function createMethods(
     ...createUserMethods(mongoose, { getCache: deps.getCache }),
     ...createToolApprovalGrantMethods(mongoose),
     ...createSessionMethods(mongoose),
+    ...createScoutMethods(mongoose),
     ...createTokenMethods(mongoose),
     ...createTokenListMethods(mongoose),
     ...createRefreshTokenBridgeMethods(mongoose),

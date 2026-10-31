@@ -1,3 +1,4 @@
+import type { ScoutModels } from '~/scout';
 import { createAgentQueuedTurnModel, createAgentQueuedTurnSequenceModel } from './queuedTurn';
 import { createAgentTriggerLaneSequenceModel } from './triggerLaneSequence';
 import { createScheduleModel, createScheduleRunModel } from './schedule';
@@ -42,6 +43,7 @@ import { createPresetModel } from './preset';
 import { createPromptModel } from './prompt';
 import { createMemoryModel } from './memory';
 import { createConfigModel } from './config';
+import { createScoutModels } from '~/scout';
 import { createTokenModel } from './token';
 import { createAgentModel } from './agent';
 import { createSkillModel } from './skill';
@@ -55,7 +57,7 @@ import logger from '~/config/winston';
 /**
  * Creates all database models for all collections
  */
-export function createModels(mongoose: typeof import('mongoose')): {
+export function createModels(mongoose: typeof import('mongoose')): ScoutModels & {
   User: ReturnType<typeof createUserModel>;
   ToolApprovalGrant: ReturnType<typeof createToolApprovalGrantModel>;
   Token: ReturnType<typeof createTokenModel>;
@@ -111,6 +113,7 @@ export function createModels(mongoose: typeof import('mongoose')): {
   ResourceLock: ReturnType<typeof createResourceLockModel>;
 } {
   const models = {
+    ...createScoutModels(mongoose),
     User: createUserModel(mongoose),
     ToolApprovalGrant: createToolApprovalGrantModel(mongoose),
     Token: createTokenModel(mongoose),

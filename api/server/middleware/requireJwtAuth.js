@@ -15,10 +15,18 @@ const {
   generateTwoFactorSetupToken,
   afterTermsGate,
   createTermsAcceptanceGate,
+  createScoutAdmissionGate,
   isTwoFactorEnrollmentRequired,
 } = require('@librechat/api');
 const { getAppConfig } = require('~/server/services/Config');
-const { getUserById } = require('~/models');
+const { getUserById, findScoutAdmission } = require('~/models');
+
+// Operator-only switch: tenant-editable config must not disable this security boundary.
+const scoutAdmissionGate = createScoutAdmissionGate({
+  enforced: isEnabled(process.env.SCOUT_ADMISSION_ENFORCED),
+  findScoutAdmission,
+  onUnavailable: () => logger.warn('[Scout] Admission authority unavailable'),
+});
 
 const hasPassportStrategy = (strategy) =>
   typeof passport._strategy === 'function' && passport._strategy(strategy) != null;
@@ -212,7 +220,10 @@ const requireJwtAuth = (req, res, next) => {
           if (tenantErr) {
             return next(tenantErr);
           }
-          afterTermsGate(requireJwtTermsAcceptance, refreshCloudFrontCookies)(req, res, next);
+          afterTermsGate(
+            scoutAdmissionGate,
+            afterTermsGate(requireJwtTermsAcceptance, refreshCloudFrontCookies),
+          )(req, res, next);
         });
       });
     })(req, res, next);
